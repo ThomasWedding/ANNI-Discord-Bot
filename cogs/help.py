@@ -64,7 +64,7 @@ class help(commands.Cog):
 				data = data + generalInstruction
 			else:
 				if option < len(basic) + len(restricted):
-					if option < len(basic):
+					if option <= len(basic):
 						for idx,op in enumerate(basic): #iterate through basic dictionary to find searched value
 							if option - 1 == idx: #markdown lists indexes starting from 1 rather than 0
 								data = commandInstruction + basic[op]
@@ -109,7 +109,7 @@ class help(commands.Cog):
 		else:
 			stop = True
         
-		if stop == False:
+		if stop == False or len(data) < 1:
 			await ctx.send(data)
 		else:
 			print("Error, Too many or invalid arguments sent to how command [help::how]")
