@@ -39,10 +39,10 @@ class chatbot(commands.Cog):
 			
 			#command interpretation per token(word)
 			if len(tokens) < 2 or tokens[1] in getQuestions:
+				data = data + "**Enter `!ask` + the number repreasenting the question you wish to ask me!\n**"
 				for i,quest in enumerate(questions):
 					data = data + str(i+1) + ": " + str(quest) + "\n"
-				data = data + "Enter !ask + the number repreasenting the question you wish to ask me!"
-
+				
 			elif len(tokens) < 3:
 				if tokens[1].isdigit() == True:
 					if tokens[1] == '1':

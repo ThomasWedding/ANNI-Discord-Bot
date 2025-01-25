@@ -13,7 +13,9 @@ class view(commands.Cog):
 	async def createLog(self, ctx) -> None:
 		log = dict() #dictionary for members
 		memData = dict() #dictionary for individual member data
-		members = ctx.guild.members #THIS MAY BE ONLY FOR CACHED MEMBERS IN SERVER --- PLEASE CHECK LATER
+		members = ctx.guild.members 
+		nickName = str()
+		memberName = str()
 		
 		#keywords
 		internKeys = ["intern", "novice"]
@@ -24,17 +26,24 @@ class view(commands.Cog):
 		isLeader = bool(False)
 		inTeam = bool(False)
 
-		print(members)
 		for member in members:
 			if member.bot == False:
+				nickName = member.nick
+				if nickName:
+					memberName = nickName
+				else:
+					memberName = member.global_name
+
 				memData = {
 					"id": member.id,
-					"name": str(member.global_name),
+					"name": memberName,
 					"startdate": member.joined_at,
 					"enddate": "na",
 					"birthday": "na",
 					"team": "na",
-					"teamleader": "na"
+					"teamleader": "na",
+					"teamleaderid": "na",
+					"position": "na"
 				}
 			    #beginning of block contains for loops that search individual member roles to set default variables.
 				for role in member.roles:
@@ -47,8 +56,7 @@ class view(commands.Cog):
 						memData["enddate"] = end_date
 					elif str(role).lower() in volunteerKeys:
 						memData["position"] = "volunteer"
-					else:
-						memData["position"] = "na"  #default if value is not recognized
+
 					if "team" in str(role).lower() and "leader" not in str(role).lower():
 						teamList = str(role).lower().split()
 						memData["team"] = teamList[1] #Team name without the preceding 'team'
@@ -56,18 +64,25 @@ class view(commands.Cog):
 				#Block to find additional information based on above results
 				if memData["team"] != "na":	#If the member has been assigned a team role
 					for m in members:
+						isLeader = False
+						inTeam = False
+						nickName = m.nick
+						if nickName:
+							memberName = nickName
+						else:
+							memberName = m.global_name
+
 						for r in m.roles:
-							if str(r).lower() in leaderTokens:
-								isLeader = True
+							for t in leaderTokens:
+								if t in str(r).lower():
+									isLeader = True
 							if memData["team"].lower() in str(r).lower():
 								inTeam = True
 						
 						if isLeader == True and inTeam == True:
-							memData["teamleader"] = m.global_name
+							memData["teamleader"] = str(memberName)
+							memData["teamleaderid"] = str(m.id)
 							break
-							
-						isLeader = False
-						inTeam = False
 			    
 			    #Add member dictionary to log dictionary
 				log[member.id] = memData #set memdata to an element in the log dict()

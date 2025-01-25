@@ -4,7 +4,7 @@ import yaml
 from pathlib import Path
 import os
 
-def saveConfig(fileName: str(), data: dict()) -> None:
+def saveConfig(fileName: str, data: dict) -> None:
 	formattedPath = Path("config/" + fileName) #Converts file path to OOP path
 	if formattedPath.exists():
 		formattedPath.unlink()
@@ -14,7 +14,7 @@ def saveConfig(fileName: str(), data: dict()) -> None:
 		yaml.dump(data,file)
 		print("Written config file [saveConfig]")
 		
-def loadConfig(fileName: str()) -> dict():
+def loadConfig(fileName: str) -> dict:
 	data = dict() #variable used to store config from file
 	formattedPath = Path("config/" + fileName)	#Converts file path to OOP path
 	if formattedPath.exists():

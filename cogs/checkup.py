@@ -37,7 +37,7 @@ class checkup(commands.Cog):
 		print("IMPORTANT SETUP: Add Google Form link with `!replink` command")
 	
 
-	def getReportedMembers(self, clear: bool = False) -> list: #get a list of members that submitted a Google Form Report
+	def getReportedMembers(self) -> list: #get a list of members that submitted a Google Form Report
 		CONF = helpers.loadConfig("GoogleSheetAPI.yaml") #Get config for API
 		ID = helpers.loadConfig("GoogleSheetID.yaml") #Get id of google sheet that holds intern responses
 		SCOPES = CONF["SCOPE"]
@@ -94,6 +94,7 @@ class checkup(commands.Cog):
 						break #Since entries are in order of newest to oldest, an old entry breaks the loop
 				except Exception as e:
 					print("Error, invalid time format in response sheet. [checkup::getReportedMembers]\n Exception: " + str(e))	
+					return
 
 		except HttpError as e:
 			print("Error, Http Error encountered[checkup::getReportedMembers]:\n Exception: " + str(e))
@@ -103,35 +104,38 @@ class checkup(commands.Cog):
 
 
 	async def checkMissedSubmissions(self) -> None:
-		if self.reportLink is not None and self.creds is not None:
+		link = helpers.loadCache("GoogleAPI", "FormLink.yaml") #get google form link from yaml file.
+		if link["formlink"] is not None or link["formlink"] != "" and self.creds is not None:
 			data = str()
-			members = self.context.guild.members
+			try:
+				members = self.context.guild.members
+			except Exception as e:
+				print("Error, ctx member has not been saved! [checkup::checkMissedSubmissions]\n Exception: " + e)
 			log = helpers.loadCache("MemberData","members.yaml")
 			teams = dict()
 
-			#Get team leaders and create teamData keys with their names
+			#Get team leaders and create team keys with their names
 			for member in members:
 				for role in member.roles:
-					if "leader" in role or "manager" in role:
-						teams[member.global_name] = dict()
-						teams[member.global_name]["reported"] = list()
-						teams[member.global_name]["noreport"] = list()
+					if "leader" in str(role) or "manager" in str(role):
+						teams[member.id] = dict()
+						teams[member.id]["reported"] = list()
+						teams[member.id]["noreport"] = list()
 			#Get team members and add them to list values according to team leader keys
 			for member in log:
 				for leader in teams:
-					if member["teamleader"] == leader:
-						if member["name"] in self.reportedMembers:
-							teams[leader]["reported"].append(member["name"])
-						elif member["name"] in self.unreportedMembers:
-							teams[leader]["noreport"].append(member["name"])
+					if log[member]["teamleaderid"] == str(leader) and log[member]["position"] == "intern":
+						if log[member]["name"] in self.reportedMembers:
+							teams[leader]["reported"].append(log[member]["name"])
+						elif log[member]["name"] in self.unreportedMembers:
+							teams[leader]["noreport"].append(log[member]["name"])
 						else:
-							print("ALERT: server intern not accounted for in progress reports: "+str(member["name"])+" [checkup::checkMissedSubmissions]")
+							print("ALERT: server intern not accounted for in progress reports: "+str(log[member]["name"])+" [checkup::checkMissedSubmissions]")
 			
 			#Save teams data to a cache file at /cache/InternSubmissionLog/ with today's date as file name
-			today = datetime.date.today()
-			helpers.saveCache("InternSubmissionLog", str(today) + ".yaml", teams)
-			#Reset Google Sheet Responses
-			self.clearFormSheet()
+			today = str(datetime.today())
+			dateAndTime = today.split()
+			helpers.saveCache("InternSubmissionLog", str(dateAndTime[0]) + ".yaml", teams)
 
 			#Create and send messages to leaders regarding intern form submissions
 			for leader in teams:
@@ -144,16 +148,17 @@ class checkup(commands.Cog):
 					data = data + " " + str(intern) + "\n"
 
 				for m in members:
-					if m.global_name == str(leader):
+					if str(m.id) == str(leader):
 						await m.send(data)
 		else:
 			print("Error, Google Form link or API credentials are missing. [checkup::checkMissedSubmissions]")
 
 	async def checkSubmissions(self) -> None:
-		if self.reportLink is not None and self.creds is not None:
+		link = helpers.loadCache("GoogleAPI", "FormLink.yaml") #get google form link from yaml file.
+		if link["formlink"] is not None or link["formlink"] != "" and self.creds is not None:
 			data = str()
 			members = self.context.guild.members
-			log = helpers.loadCache("members","MemberData.yaml")
+			log = helpers.loadCache("MemberData","members.yaml")
 			link = helpers.loadCache("GoogleAPI", "FormLink.yaml")
 			self.reportedMembers = self.getReportedMembers()
 			self.unreportedMembers = list()
@@ -164,12 +169,12 @@ class checkup(commands.Cog):
 					data = "Hey there, I hope your week has been going well! "
 					data = data + "Don't forget to submit your weekly report for your team leader!\n"
 					data = data + "Enter your weekly report here: " + link["formlink"] + "\n"
-				if log[m]["teamleader"] != None and log[m]["team leader"] != "na":
-					data = data + "Your team leader is " + log[m]["teamleader"]
+					if log[m]["teamleader"] != None and log[m]["teamleader"] != "na":
+						data = data + "Your team leader is " + log[m]["teamleader"]
 					
-				for member in members:
-					if member.id == m:
-						await member.send(data)
+					for member in members:
+						if member.id == m:
+							await member.send(data)
 		else:
 			print("Error, Google Form link or API credentials are missing. [checkup::checkSubmissions]")
 
@@ -273,7 +278,7 @@ class checkup(commands.Cog):
 			
 			elif removeSchedule == True and jobIndex is not None:
 				try:
-					self.scheduler.remove_job(jobIndex)
+					self.scheduler.remove_job(str(jobIndex))
 					data = "Done!"
 				except Exception as e:
 					errors.append("Unable to remove job do to an error.")
@@ -388,6 +393,16 @@ class checkup(commands.Cog):
 			data = "Sorry, you are not authorized to use this command."
 
 		await ctx.send(data)
+
+	@commands.command(name = "testinterncheckup", description = "Run a test on the Google Sheets API.")
+	async def testinterncheckup(self, ctx) -> None: #ONLY TO BE USED FOR DEBUGGING
+		authorized = helpers.checkAuth(ctx.author) #check authorization
+
+		if authorized == True:
+			await self.checkSubmissions() #Check and send reminders to interns
+			await self.checkMissedSubmissions() #Check which interns missed their submissions
+		else:
+			await ctx.send("Sorry, you are not authorized to run this command")
 
 
 	@commands.command(name = "replink", description = "Update Google Form report link.")

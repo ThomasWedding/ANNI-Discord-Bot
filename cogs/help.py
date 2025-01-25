@@ -34,7 +34,8 @@ class help(commands.Cog):
 			"Change intern/associate start date" : "`!memberconfig [Name or ID] startdate [YYYY-MM-DD]`",
 			"Change intern/associate end date" : "`!memberconfig [Name or ID] enddate [YYYY-MM-DD]`",
 			"Change member position(role in company)" : "`!memberconfig [Name or ID] position [intern/volunteer/alumni]`",
-			"Schedule a day and time for Anni to remind interns to post updates (EST)" : "`!schedule [day] [hour:minute]`\nSpecify hour and minute using the 24-hour clock.",
+			"Schedule a day and time for Anni to remind interns to post updates (EST)" : '''`!schedule [remind/notify] [day] [hour:minute]`
+			\nSpecify hour and minute using the 24-hour clock.\nNotify: alert managers of intern update status.\nRemind: alert interns to post updates.''',
 			"Remove scheduled time for Anni to remind interns" : "`!schedule remove [Job ID]`\nGet Job ID from:\n`!schedulecheck`"
 		}
 
