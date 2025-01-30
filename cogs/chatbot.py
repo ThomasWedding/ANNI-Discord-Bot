@@ -31,7 +31,6 @@ class chatbot(commands.Cog):
 
 			#Token bank to decifer commands
 			getQuestions = ["all", "print", "show", "questions", "quest", "help"] #command tokens for showing quesitons
-			leaders = ["chief", "officer", "manager", "leader"]
 			questions = ["When does my internship end?", "What team am I part of?", "Who are the moderators?", "Who are my team leaders?"]
 			data = str()
 			stripped = ctx.message.content.replace("[","").replace("]","")
@@ -39,10 +38,10 @@ class chatbot(commands.Cog):
 			
 			#command interpretation per token(word)
 			if len(tokens) < 2 or tokens[1] in getQuestions:
+				data = data + "**Enter `!ask` + the number repreasenting the question you wish to ask me!\n**"
 				for i,quest in enumerate(questions):
 					data = data + str(i+1) + ": " + str(quest) + "\n"
-				data = data + "Enter !ask + the number repreasenting the question you wish to ask me!"
-
+				
 			elif len(tokens) < 3:
 				if tokens[1].isdigit() == True:
 					if tokens[1] == '1':
@@ -84,25 +83,11 @@ class chatbot(commands.Cog):
 							data = "Sorry, I was unable to find the moderators."
 
 					elif tokens[1] == '4':
-						authorTeams = list()
-						leadersFound = bool(False)
-						data = "Your team leaders are: \n"
-
-						for role in ctx.author.roles:
-							roleTokens = role.name.lower().split()
-							for r in roleTokens:
-								if r in leaders:
-									authorTeams.append(role.name.lower())
-
-						for member in ctx.guild.members:
-							for role in member.roles:
-								for team in authorTeams:
-									if team in role.name:
-										data = data + member.global_name + "\n"
-										leadersFound = True
-
-						if len(authorTeams) < 1 or leadersFound == False:
-							data = "Sorry, I was unable to find your team leaders."
+						data = "Your team leader is: \n"
+						if authorStats["teamleader"] != "na":
+							data = data + str(authorStats["teamleader"])
+						else:
+							data = "Sorry, I am unable to find your team leader."
 
 					else:
 						print("Error: invalid question [chatbot::ask]")

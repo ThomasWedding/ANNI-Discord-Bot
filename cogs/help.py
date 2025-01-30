@@ -34,7 +34,8 @@ class help(commands.Cog):
 			"Change intern/associate start date" : "`!memberconfig [Name or ID] startdate [YYYY-MM-DD]`",
 			"Change intern/associate end date" : "`!memberconfig [Name or ID] enddate [YYYY-MM-DD]`",
 			"Change member position(role in company)" : "`!memberconfig [Name or ID] position [intern/volunteer/alumni]`",
-			"Schedule a day and time for Anni to remind interns to post updates (EST)" : "`!schedule [day] [hour:minute]`\nSpecify hour and minute using the 24-hour clock.",
+			"Schedule a day and time for Anni to remind interns to post updates (EST)" : '''`!schedule [remind/notify] [day] [hour:minute]`
+			\nSpecify hour and minute using the 24-hour clock.\nNotify: alert managers of intern update status.\nRemind: alert interns to post updates.''',
 			"Remove scheduled time for Anni to remind interns" : "`!schedule remove [Job ID]`\nGet Job ID from:\n`!schedulecheck`"
 		}
 
@@ -63,7 +64,7 @@ class help(commands.Cog):
 				data = data + generalInstruction
 			else:
 				if option < len(basic) + len(restricted):
-					if option < len(basic):
+					if option <= len(basic):
 						for idx,op in enumerate(basic): #iterate through basic dictionary to find searched value
 							if option - 1 == idx: #markdown lists indexes starting from 1 rather than 0
 								data = commandInstruction + basic[op]
@@ -108,7 +109,7 @@ class help(commands.Cog):
 		else:
 			stop = True
         
-		if stop == False:
+		if stop == False or len(data) < 1:
 			await ctx.send(data)
 		else:
 			print("Error, Too many or invalid arguments sent to how command [help::how]")
