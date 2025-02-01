@@ -93,7 +93,6 @@ class chatbot(commands.Cog):
 		bot_message = "Sorry, I was not able to interpret this command. Please use the !how command for help."
 
 		await ctx.send(bot_message)
-	
 
 async def setup(bot):
 	await bot.add_cog(chatbot(bot))
