@@ -40,14 +40,14 @@ def loadCache(dirName: str, fileName: str) -> dict:
 	data = dict() #variable used to store config from file
 	path = Path("cache/" + dirName + "/" + fileName)
 	
-	if path.exists():
+	try:
 		with open(path, "r") as file:
 			data = yaml.safe_load(file)
 			print("Data loaded from " + str(path) + " [loadCache]")
-	else:
+			return data
+	except Exception as e:
 		print("Error: Data was not able to be loaded from " + str(path) + " [loadCache]")
-		
-	return data
+		print("Exception:"+str(e))		
 	
 def getTimeStamp(value: datetime = None):
 	#Generate current time object
