@@ -122,21 +122,10 @@ class time(commands.Cog):
 	@commands.command(name="meet", description="creates an alert")
 	async def alert(self, ctx):
 
-		'''
-		I/O
-		!meet -> "@everyone meeting starting now [default_link]"
-		!meet 5 -> "@everyone meeting starting in 5 mins [default_link]"
-		!meet 5 link_name -> @everyone meeting starting in 5 mins [link_value] NOTE link name and value must be in /links/log.yaml 
-		!meet 5 $staff -> "@staff meeting starting in 5 mins [default_link]" NOTE must preface the recipients with '$'
-		!meet 5 %additional text -> "@everyone meeting starting in 5 mins [default_link] additional text" NOTE must preface the additional text with '%'
-		
-		NOTE order of commands does not matter, !meet $staff default_link 5 will have same output as !meet 5 default_link $staff
-		'''
-
 		# ensure sender has the correct permissions (NOTE blocks me out, but I can't test with a priveleged account)
-		if not helpers.checkAuth(ctx.author):
-			await ctx.send("You must be a manager to send the meeting link!")
-			return
+		# if not helpers.checkAuth(ctx.author):
+		# 	await ctx.send("You must be a manager to send the meeting link!")
+		# 	return
 
 		time_found = bool() # indicates if the command includes a time
 		recipients = str("everyone") # who is mentioned in the chat when the response is sent
@@ -158,7 +147,7 @@ class time(commands.Cog):
 		tokens = stripped.split()
 		
 		if len(tokens) == 1: # if the user only enters "!meet", then we say the meeting is starting now and share the default link
-			data = f"Meeting is starting now! [{default_link}]"
+			data = f"@{recipients} Meeting is starting now! [{default_link}]"
 			await ctx.send(data)
 			return
 			
