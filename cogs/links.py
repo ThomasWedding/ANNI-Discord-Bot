@@ -134,9 +134,9 @@ class time(commands.Cog):
 		'''
 
 		# ensure sender has the correct permissions (NOTE blocks me out, but I can't test with a priveleged account)
-		# if not helpers.checkAuth(ctx.author):
-		# 	await ctx.send("You must be a manager to send the meeting link!")
-		# 	return
+		if not helpers.checkAuth(ctx.author):
+			await ctx.send("You must be a manager to send the meeting link!")
+			return
 
 		time_found = bool() # indicates if the command includes a time
 		recipients = str("everyone") # who is mentioned in the chat when the response is sent
