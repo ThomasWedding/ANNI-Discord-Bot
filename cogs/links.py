@@ -1,16 +1,21 @@
-#Local imports
 import utils.helpers as helpers
-
-#Discord imports
 import discord
 from discord.ext import commands
-
-#Time imports
 import datetime
 from datetime import timezone
 
+'''
+Commands:
+
+meet! -> "Meeting is starting now! [link]"
+
+
+
+'''
+
 
 class time(commands.Cog):
+	
 	def __init__(self, bot):
 		self.bot = bot
 
@@ -25,11 +30,11 @@ class time(commands.Cog):
 		save = bool(False)
 		all = bool(False)
 		
-		#set flag variables for save or remove
+		# set flag variables for save or remove
 		if len(tokens) >= 2:
-			if tokens[1] == "remove" or tokens[1] == "rm":
+			if tokens[1] == "remove" or tokens[1] == "rm" or tokens[1] == "delete":
 				remove = True
-			if tokens[1] == "save" or tokens[1] == "make":
+			if tokens[1] == "save" or tokens[1] == "make" or tokens[1] =="add":
 				save = True
 			if tokens[1] == "all" or tokens[1] == "show" or tokens[1] == "list":
 				all = True
@@ -114,101 +119,85 @@ class time(commands.Cog):
 	async def al(self, ctx):
 		await self.alert(ctx)
 		
-	@commands.command(name="alert", description="creates an alert")
+	@commands.command(name="meet", description="creates an alert")
 	async def alert(self, ctx):
-		syntaxError = bool(False)
-		gotTime = bool() #flag used to denote the finding of a time value
-		role = str("everyone")
-		tokens = list() #command when separated by spaces
-		data = str() #message that will be sent as response to command
-		hour = int(0)
-		minute = int(0)
-		minOP = bool(False) #makes single value time minutes
-		hourOP = bool(False) #makes single value time hours
-		singleTimeValue = int() #stores time value if it is in the short format
-		#alert messages
-		meeting = bool(False) #sets message type to meeting (Default)
-		delay = bool(True) #sets message type to delayed meeting
-		linkLog = helpers.loadCache("Links", "log.yaml")
-		link = str()
+
+		'''
+		I/O
+		!meet -> "@everyone meeting starting now [default_link]"
+		!meet 5 -> "@everyone meeting starting in 5 mins [default_link]"
+		!meet 5 link_name -> @everyone meeting starting in 5 mins [link_value] NOTE link name and value must be in /links/log.yaml 
+		!meet 5 $staff -> "@staff meeting starting in 5 mins [default_link]" NOTE must preface the recipients with '$'
+		!meet 5 %additional text -> "@everyone meeting starting in 5 mins [default_link] additional text" NOTE must preface the additional text with '%'
+		
+		NOTE order of commands does not matter, !meet $staff default_link 5 will have same output as !meet 5 default_link $staff
+		'''
+
+		# ensure sender has the correct permissions (NOTE blocks me out, but I can't test with a priveleged account)
+		# if not helpers.checkAuth(ctx.author):
+		# 	await ctx.send("You must be a manager to send the meeting link!")
+		# 	return
+
+		time_found = bool() # indicates if the command includes a time
+		recipients = str("everyone") # who is mentioned in the chat when the response is sent
+		tokens = list() # the command when separated by spaces
+		data = str() # message that will be sent as response to command
+		additional_data = list() # if the message includes extraneous data, we copy that into a clean array with no commands
+		linkLog = helpers.loadCache("Links", "log.yaml") # load links from the yaml file
 		gotLink = bool(False)
-		
-		
+		minutes_until_meeting = bool(False) 
+		link = str()
+		default_link = str()
+
+		if "default_link" in linkLog.keys():
+			default_link = str(linkLog["default_link"])
+		else: 
+			default_link= str("https://us02web.zoom.us/j/89258513813?pwd=DIcmLw5SJzCaJxWssxX2vW2WBaywxj.1")
+
 		stripped = ctx.message.content.replace("[","").replace("]","")
 		tokens = stripped.split()
-		#parse tokens, setting flags or values declared above
-		if len(tokens) > 1:
-			for idx, token in enumerate(tokens):
+		
+		if len(tokens) == 1: # if the user only enters "!meet", then we say the meeting is starting now and share the default link
+			data = f"Meeting is starting now! [{default_link}]"
+			await ctx.send(data)
+			return
+			
+		else: # else we iterate the tokens and set the flags and values above
+			for i, token in enumerate(tokens):
 				for key in list(linkLog.keys()):
 					if str(key).lower() == token:
 						gotLink = True
 						link = linkLog[key]
-				if "min" in token.lower() or token.lower() == "m":
-					minOP = True
-						
-				if "hour" in token.lower() or token.lower() == "h":
-					hourOP = True
 				
-				if token.isdigit() == True and gotTime == False:
-					singleTimeValue = int(token)
-					gotTime = True
-				
-				if "meet" in token.lower() or "meeting" in token.lower():
-					delay = False
-					meeting = True
+				if token.isdigit() == True and time_found == False:
+					time_found = True
+					minutes_until_meeting = int(token)
 				
 				if "$" in token:
-					role = token.replace("$", "")
-		else:
-			data = "Sorry, I could not fullfill your command. Use the '!how' command for help."
-			await ctx.send(data)
-			return
+					recipients = token.replace("$", "")
+
+				if "%" in token:
+					index = tokens.index(token)  # Get the index of the first token with '%', then copy all following tokens to new array
+					additional_data = [tokens[index].lstrip('%')] + tokens[index + 1:]
 		
-		#Generate current time object
-		now = datetime.datetime.now()
-		
-		if gotTime == True:
-			if hourOP == True:
-				hour = singleTimeValue
-				future = now + datetime.timedelta(hours=hour)
-			elif minOP == True:
-				minute = singleTimeValue
-				future = now + datetime.timedelta(minutes=minute)	
+		if time_found == True:
+
+			data = data + "@" + recipients + " Meeting will be starting in " + str(minutes_until_meeting) + " minutes!"
+
+			if gotLink == True:
+				data = data + " [" + link + "]"
 			else:
-				data = "Sorry, I could not identify the time given.\nUse '!how' for help.\n"
-				data = data + "Command example: !alert minute 5"
-				await ctx.send(data)
-				return
-		
-			#Generate discord timestamp useing new timedelta created above
-			unix_timestamp = int(future.timestamp())
-			discord_timestamp = f"<t:{unix_timestamp}:f>"
-		
-			#Construct data message for meeting mode
-			#Meeting message is used in else clause because it is the default case
-			if delay == True and meeting != True:
-				data = data + "@" + role + " There has been a technical delay, our meeting will be starting at "
-			else:
-				data = data + "@" + role + " Meeting will be starting at "	
-		
-			#Add timestamp to data message
-			data = data + discord_timestamp
+				data = data + " [" + default_link + "]"
+
 		elif gotLink == True:
-			data = data + "@" + role + " Our meeting is starting! " + link
-		else:
-			await ctx.send("Sorry I was unable to interpret your command. Please use the '!how' command for help.")
-			return
+			data = data + "@" + recipients + " Our meeting is starting! " + link
 
-		#check for syntax errors before sending message
-		if syntaxError == False:
-			await ctx.send(data)
-		elif syntaxError == True:
-			await ctx.send("Improper syntax, command example: !alert min 5\nEnter !h for more help.")
 		else:
-			await ctx.send("I was unable to find a specified time or syntax is incorrect,\nCommand example: !alert min 5\nEnter '!how' for help.")
+			data = data + "@" + recipients + " Our meeting is starting! " + default_link
 
+		data = data + "\n" + " ".join(additional_data)
+		await ctx.send(data)
+			
 
 async def setup(bot):
 	await bot.add_cog(time(bot))
-
-
