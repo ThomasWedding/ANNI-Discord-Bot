@@ -1,4 +1,4 @@
-# Standard inputs
+# Standard includes
 import discord
 from discord.ext import commands
 
