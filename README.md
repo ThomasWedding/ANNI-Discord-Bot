@@ -2,9 +2,9 @@
 <h1 align="center">
   Childhood Cancer Society Discord Bot
 </h1>
-<h2 align="center">
+<h4 align="center">
   > A Discord bot made to help organize and manage team members in the Childhood Cancer Society Discord Server
-</h2>
+</h4>
 
 ### GitHub Link: [Bot Repository](https://github.com/ChildhoodCancerSociety/ANNI-Discord-Bot)
 
@@ -27,7 +27,7 @@ Some of these tasks may involve gathering progress reports from members or answe
 - `./main.py` -> Bot setup file that is run to start the bot.    
 
 ### PROJECT SPECIFICATIONS:
-- Requires ```bash python3.11```
+- Requires ```python 3.11```
 - Project dependencies are specified in the `requirements.txt` file. 
 - This project currently uses YAML to save data to files.
   - Functions used by COGS to save and load files are found in `./utils/helpers.py`.
@@ -50,4 +50,4 @@ Some of these tasks may involve gathering progress reports from members or answe
 
 ### GENERAL USAGE:
 The command prefix for this bot is `!`.  
-With the bot installed and active, use the `!how` command to list all available commands alongside brief descriptions of their functionality. Instructions can also be found in the `/doc ` directory.
+With the bot installed and active, use the `!how` command to list all available commands alongside brief descriptions of their functionality. Instructions can also be found in the `/doc` directory.
