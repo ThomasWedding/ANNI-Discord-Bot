@@ -12,6 +12,7 @@ ANNI is a Discord bot created for the Childhood Cancer Society non-profit organi
 * Send meeting links at designated times
 
 ## 🏛️ PROJECT STRUCTURE:
+```md
 📂 ANNI-Discord-Bot
 ┃ ┣ 📂 cache            # Local data saved by the bot
 ┃ ┃ ┣ 📂 GoogleAPI         # API tokens and credentials for Google services
@@ -24,6 +25,7 @@ ANNI is a Discord bot created for the Childhood Cancer Society non-profit organi
 ┃ ┃ ┗ 📙 helpers.py        # Main helper file with functions used by COGs
 ┃ ┣ 📄 requirements.txt # Project dependencies
 ┗ ┗ 📙 main.py          # Setup file that starts and configures the bot
+```
 
 ## 📝 Prerequisites:
 * Requires `python 3.11`
