@@ -51,4 +51,4 @@
 
 ## 🪛 General Usage:
 The command prefix for this bot is `!`.  
-With the bot installed and active, use the `!how` command to list all available commands alongside brief descriptions of their functionality. Instructions can also be found in the `/doc` directory.
+With the bot installed and active, use the `!how` command to list all available commands alongside brief descriptions of their functionality. Instructions can also be found in the `doc` directory.
