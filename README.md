@@ -3,7 +3,7 @@
   Childhood Cancer Society Discord Bot
 </h1>
 
-ANNI is a Discord bot created for the Childhood Cancer Society non-profit organization to help manage team members in the Childhood Cancer Society Discord Server.
+"ANNI" is a Discord bot created for the Childhood Cancer Society non-profit organization to help manage team members in the Childhood Cancer Society Discord Server.
 
 ## ⚙ Features
 
@@ -11,16 +11,16 @@ ANNI is a Discord bot created for the Childhood Cancer Society non-profit organi
 * Answer common questions from organization members
 * Send meeting links at designated times
 
-## 🏛️ PROJECT STRUCTURE:
+## 🏛️ Project Structure:
 ```md
 📂 ANNI-Discord-Bot
 ┃ ┣ 📂 cache            # Local data saved by the bot
 ┃ ┃ ┣ 📂 GoogleAPI         # API tokens and credentials for Google services
-┃ ┃ ┣ 📂 Links             # YAML files for the link COG that store meeting link URLs
+┃ ┃ ┣ 📂 Links             # YAML files for the "link" COG that store meeting link URLs
 ┃ ┃ ┗ 📂 MemberData        # Server and member data file(s) (created by view COG)
 ┃ ┣ 📂 config           # Configuration files for COGs
 ┃ ┣ 📂 cogs             # COG files, which are loaded on startup
-┃ ┣ 📂 doc              # Command documentation files. Used by the help COG
+┃ ┣ 📂 doc              # Command documentation files. Used by the "help" COG
 ┃ ┣ 📂 utils            # Python helper scripts for use by COGs
 ┃ ┃ ┗ 📙 helpers.py        # Main helper file with functions used by COGs
 ┃ ┣ 📄 requirements.txt # Project dependencies
@@ -32,12 +32,12 @@ ANNI is a Discord bot created for the Childhood Cancer Society non-profit organi
 * Project dependencies are specified in the `requirements.txt` file. 
 * This project currently uses YAML to save data to files.
 
-## ✨ GETTING STARTED:
+## ✨ Getting Started:
 1. Clone the repository:
    - `git clone https://github.com/ChildhoodCancerSociety/ANNI-Discord-Bot`
-2. Create a Python virtual environment in the root of the project directory(BASH/UNIX):
+2. Create a Python virtual environment in the root of the project directory (BASH/UNIX):
    - `python -m venv .venv`
-3. Activate the virtual environment(BASH/UNIX):
+3. Activate the virtual environment (BASH/UNIX):
    - `. .venv/bin/activate`
 4. Install the dependencies specified in the requirements.txt file (BASH/UNIX):
    - `.venv/bin/pip install -r requirements.txt`
@@ -49,6 +49,6 @@ ANNI is a Discord bot created for the Childhood Cancer Society non-profit organi
 8. Start the bot inside of the Python virtual environment:
    - `.venv/bin/python main.py`
 
-## 🪛 GENERAL USAGE:
+## 🪛 General Usage:
 The command prefix for this bot is `!`.  
 With the bot installed and active, use the `!how` command to list all available commands alongside brief descriptions of their functionality. Instructions can also be found in the `/doc` directory.
