@@ -24,10 +24,13 @@ class Report_Reminder(commands.Cog):
     async def weekly_reminder(self):
         now = datetime.now()
         
-        if now.weekday() == 0 and now.hour == 12: # NOTE this is where to update the day/time the message is sent
+        if now.weekday() == 0 and now.hour == 10: # NOTE this is where to update the day/time the message is sent
             channel = self.bot.get_channel(895108659552583730)
             if channel:
-                await channel.send("Reminder to submit your weekly report by 5pm today!")
+                seven_thirty = now.replace(hour=19, minute=30, second=0, microsecond=0)
+                unix_timestamp = int(seven_thirty.timestamp())
+                discord_timestamp = f"<t:{unix_timestamp}:t>"
+                await channel.send(f"Reminder to submit your weekly report by {discord_timestamp} today!")
 
     @weekly_reminder.before_loop
     async def before_weekly_task(self):
