@@ -5,6 +5,8 @@
 
 "ANNI" is a Discord bot created for the Childhood Cancer Society non-profit organization to help manage team members in the Childhood Cancer Society Discord Server.
 
+[Gitbook](https://wiki.childhoodcancersociety.dev/)
+
 ## ⚙ Features
 
 * Gather progress reports
@@ -15,7 +17,7 @@
 ```md
 📂 ANNI-Discord-Bot
 ┃ ┣ 📂 cache            # Local data saved by the bot
-┃ ┃ ┣ 📂 GoogleAPI         # API tokens and credentials for Google services
+┃ ┃ ┣ 📂 GoogleAPI         # API tokens and credentials for Google services (may be removed)
 ┃ ┃ ┣ 📂 Links             # YAML files for the "link" COG that store meeting link URLs
 ┃ ┃ ┗ 📂 MemberData        # Server and member data file(s) (created by view COG)
 ┃ ┣ 📂 config           # Configuration files for COGs
@@ -39,14 +41,15 @@
    - `python -m venv .venv`
 3. Activate the virtual environment (BASH/UNIX):
    - `. .venv/bin/activate`
-4. Install the dependencies specified in the requirements.txt file (BASH/UNIX):
+4. Install any missing dependencies from the requirements.txt file (BASH/UNIX):
    - `.venv/bin/pip install -r requirements.txt`
-5. Create a `.env` in the root directory and add your bot token using the following format:
+5. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and create a bot
+6. Select the "OAuth2" category and under the "OAuth2 URL Generator" select "Bot", then "Administrator" in the menu that appears underneath
+7. Copy the generated URL and paste it into a browser, and select a server to add the bot to
+8. In the "Bot" category in the Discord Developer Portal, select "Reset Token" and copy the token
+9. Create a `.env` in the root directory and add your bot token using the following format:
    - `token=YOUR_BOT_TOKEN`
-6. Obtain your `credentials.json` file from your Google Cloud account and place it into the `cache` directory
-7. Obtain your `GoogleSheetID.yaml` file with the following contents and place it into the `config` directory:
-   - `SPREADSHEET_ID : "YOUR_SHEET_ID"`
-8. Start the bot inside of the Python virtual environment:
+10. Start the bot inside of the Python virtual environment:
    - `.venv/bin/python main.py`
 
 ## 🪛 General Usage:
